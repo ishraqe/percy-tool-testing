@@ -1,5 +1,8 @@
 import { defineConfig, devices } from '@playwright/test';
 
+const port = 5173;
+const baseURL = `http://localhost:${port}`;
+
 export default defineConfig({
   testDir: './tests',
   fullyParallel: true,
@@ -8,14 +11,16 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   reporter: 'list',
   use: {
-    baseURL: 'http://localhost:5173',
+    baseURL,
     trace: 'on-first-retry',
     ...devices['Desktop Chrome'],
   },
   webServer: {
-    command: 'npm run dev',
-    url: 'http://localhost:5173',
-    reuseExistingServer: !process.env.CI,
+    command: process.env.CI
+      ? `npm run preview -- --port ${port} --strictPort`
+      : 'npm run dev',
+    url: baseURL,
+    reuseExistingServer: true,
     timeout: 120_000,
   },
 });

@@ -24,17 +24,22 @@ jobs:
         run: npm install
 
       - name: Install Playwright browsers
-        run: npx playwright install
+        run: npx playwright install --with-deps chromium
 
       - name: Build application
         run: npm run build
 
-      - name: Start application
+      - name: Verify Percy token
+        env:
+          PERCY_TOKEN: ${{ vars.PERCY_TOKEN }}
         run: |
-          npm run dev &
-          sleep 10
+          if [ -z "$PERCY_TOKEN" ]; then
+            echo "::error::Add PERCY_TOKEN under Actions → Variables"
+            exit 1
+          fi
 
       - name: Run Percy tests
         env:
-          PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
+          PERCY_TOKEN: ${{ vars.PERCY_TOKEN }}
+          CI: true
         run: npx percy exec -- npx playwright test

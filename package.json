@@ -9,7 +9,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "test:visual": "playwright test",
-    "test:percy": "percy exec -- playwright test"
+    "test:percy": "node --env-file=.env ./node_modules/.bin/percy exec -- playwright test"
   },
   "dependencies": {
     "react": "^19.2.6",
